@@ -9,6 +9,7 @@ public class Player {
     private boolean inJail;
     private int jailTurns;
     private boolean hasGetOutOfJailFreeCard;
+    private Dice dice;
 
     public Player(String name, String token) {
         this.name = name;
@@ -22,12 +23,8 @@ public class Player {
     }
 
     public void move(int steps) {
-        if (!inJail) {
-            position = (position + steps) % 40; // Wrap around board
-            System.out.println(name + " moved to position " + position);
-        } else {
-            System.out.println(name + " is in jail and cannot move!");
-        }
+        position = (position + steps) % 40; // Wrap around board
+        System.out.println(name + " moved to position " + position);
     }
 
     public void buyProperty(Property property) {
@@ -62,6 +59,8 @@ public class Player {
         }
     }
 
+    public void goToJail() {this.inJail = true;}
+
     public void getOutOfJail(String method) {
         if (method.equals("pay")) {
             if (money >= 50) {
@@ -82,9 +81,7 @@ public class Player {
                 System.out.println(name + " does not have a 'Get Out of Jail Free' card!");
             }
         } else if (method.equals("roll")) {
-            int dice1 = rollDice();
-            int dice2 = rollDice();
-            if (dice1 == dice2) {
+            if (dice.rollJail()) {
                 inJail = false;
                 jailTurns = 0;
                 System.out.println(name + " rolled doubles and got out of jail!");
@@ -101,8 +98,8 @@ public class Player {
         }
     }
 
-    private int rollDice() {
-        return (int) (Math.random() * 6) + 1;
+    private void rollDice() {
+        dice.rollDice(this);
     }
 
     public void increaseMoney(int amount) {
