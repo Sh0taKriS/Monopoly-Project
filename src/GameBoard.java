@@ -71,17 +71,19 @@ public class GameBoard {
 
     // Step 3: Initialize Chance cards
     private void initializeChanceCards() {
-        chanceDeck.add(new ChanceCard("Advance to Go", player -> player.setPosition(0)));
-        chanceDeck.add(new ChanceCard("Go to Jail", player -> player.setPosition(10))); // Assuming 10 is Jail
+        chanceDeck.add(new ChanceCard("Advance to Boardwalk", player -> player.setPosition(39))); // Assuming 39 is Boardwalk
+        chanceDeck.add(new ChanceCard("Advance to Go (Collect $200)", player -> {player.setPosition(0); player.increaseMoney(200);}));
+        chanceDeck.add(new ChanceCard("Go to Jail – Go directly to jail – Do not pass Go – Do not collect $200", player -> player.setPosition(10))); // Assuming 10 is Jail
         chanceDeck.add(new ChanceCard("Pay school fees of $150", player -> player.decreaseMoney(150)));
         chanceDeck.add(new ChanceCard("Bank pays you a dividend of $50", player -> player.increaseMoney(50)));
         chanceDeck.add(new ChanceCard("Your building loan matures – Collect $150", player -> player.increaseMoney(150)));
         chanceDeck.add(new ChanceCard("You have won a crossword competition – Collect $100", player -> player.increaseMoney(100)));
-        chanceDeck.add(new ChanceCard("Advance to Illinois Avenue", player -> player.setPosition(24))); // Assuming 24 is Illinois Avenue
-        chanceDeck.add(new ChanceCard("Advance to St. Charles Place", player -> player.setPosition(11))); // Assuming 11 is St. Charles Place
-        chanceDeck.add(new ChanceCard("Advance token to nearest Utility", this::moveToNearestUtility));
-        chanceDeck.add(new ChanceCard("Advance token to the nearest Railroad", this::moveToNearestRailroad));
-        chanceDeck.add(new ChanceCard("Take a trip to Reading Railroad", player -> player.setPosition(5))); // Assuming 5 is Reading Railroad
+        chanceDeck.add(new ChanceCard("Advance to Illinois Avenue. If you pass Go, collect $200", player -> {if (player.getPosition() > 24) {player.increaseMoney(200);}player.setPosition(24);})); // Assuming 24 is Illinois Avenue
+        chanceDeck.add(new ChanceCard("Advance to St. Charles Place. If you pass Go, collect $200", player -> {if (player.getPosition() > 11) {player.increaseMoney(200);}player.setPosition(11);})); // Assuming 11 is St. Charles Place
+        chanceDeck.add(new ChanceCard("Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled", this::moveToNearestRailroad));
+        chanceDeck.add(new ChanceCard("Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times amount thrown", this::moveToNearestUtility));
+        chanceDeck.add(new ChanceCard("Take a trip to Reading Railroad. If you pass Go, collect $200", player -> {if (player.getPosition() > 5) {player.increaseMoney(200);}player.setPosition(5);})); // Assuming 5 is Reading Railroad
+        chanceDeck.add(new ChanceCard("Speeding fine $15", player -> player.decreaseMoney(15)));
         chanceDeck.add(new ChanceCard("Take a walk on the Boardwalk", player -> player.setPosition(39))); // Assuming 39 is Boardwalk
         chanceDeck.add(new ChanceCard("Go back 3 spaces", player -> player.setPosition(player.getPosition() - 3)));
         chanceDeck.add(new ChanceCard("Make general repairs on all your property – For each house pay $25, For each hotel $100", this::makeGeneralRepairs));
@@ -89,11 +91,13 @@ public class GameBoard {
         chanceDeck.add(new ChanceCard("You have been elected Chairman of the Board – Pay each player $50", player -> payEachPlayer(player, 50)));
         chanceDeck.add(new ChanceCard("Your building and loan matures – Collect $150", player -> player.increaseMoney(150)));
         chanceDeck.add(new ChanceCard("You have won a crossword competition – Collect $100", player -> player.increaseMoney(100)));
+        chanceDeck.add(new ChanceCard("Get Out of Jail Free – This card may be kept until needed or sold", Player::receiveGetOutOfJailFreeCard));
+
     }
 
     // Step 4: Initialize Community Chest cards
     private void initializeCommunityChestCards() {
-        communityDeck.add(new CommunityChestCard("Advance to Go", player -> player.setPosition(0)));
+        communityDeck.add(new CommunityChestCard("Advance to Go (Collect $200)", player -> {player.setPosition(0);player.increaseMoney(200);}));
         communityDeck.add(new CommunityChestCard("Doctor’s fees – Pay $50", player -> player.decreaseMoney(50)));
         communityDeck.add(new CommunityChestCard("Bank error in your favor – Collect $200", player -> player.increaseMoney(200)));
         communityDeck.add(new CommunityChestCard("From sale of stock you get $50", player -> player.increaseMoney(50)));
@@ -105,11 +109,15 @@ public class GameBoard {
         communityDeck.add(new CommunityChestCard("It is your birthday – Collect $10 from every player", player -> collectFromEachPlayer(player, 10)));
         communityDeck.add(new CommunityChestCard("Life insurance matures – Collect $100", player -> player.increaseMoney(100)));
         communityDeck.add(new CommunityChestCard("Pay hospital fees of $100", player -> player.decreaseMoney(100)));
-        communityDeck.add(new CommunityChestCard("Pay school fees of $150", player -> player.decreaseMoney(150)));
+        communityDeck.add(new CommunityChestCard("Pay school fees of $50", player -> player.decreaseMoney(50)));
         communityDeck.add(new CommunityChestCard("Receive $25 consultancy fee", player -> player.increaseMoney(25)));
         communityDeck.add(new CommunityChestCard("You are assessed for street repairs – $40 per house – $115 per hotel", this::assessStreetRepairs));
         communityDeck.add(new CommunityChestCard("You have won second prize in a beauty contest – Collect $10", player -> player.increaseMoney(10)));
         communityDeck.add(new CommunityChestCard("You inherit $100", player -> player.increaseMoney(100)));
+        communityDeck.add(new CommunityChestCard("You go to the local school’s car wash fundraiser – but you forget to close your windows! PAY $100", player -> player.decreaseMoney(100)));
+        communityDeck.add(new CommunityChestCard("You organize a block party so people on your street can get to know each other. COLLECT $10 FROM EACH PLAYER", player -> collectFromEachPlayer(player, 10)));
+        communityDeck.add(new CommunityChestCard("You set aside time every week to hang out with your elderly neighbor – you’ve heard some amazing stories! COLLECT $100", player -> player.increaseMoney(100)));
+        communityDeck.add(new CommunityChestCard("You help build a new school playground – then you get to test the slide! COLLECT $100", player -> player.increaseMoney(100)));
     }
 
     // Helper methods for card actions
