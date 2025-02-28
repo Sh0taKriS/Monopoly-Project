@@ -1,6 +1,9 @@
-package Model;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class GameBoard {
     final private List<Space> spaces; // Board spaces
@@ -18,17 +21,21 @@ public class GameBoard {
 
     // Step 1: Initialize the game board with properties and spaces
     private void initializeBoard() {
-        createGameBoard();
-        initializeChanceCards();
-        initializeCommunityChestCards();
-        shuffleChanceCards();
-        shuffleCommunityCards();
-        assignTokensToPlayers();
-        distributeStartingMoney();
-    }
+        UtilityGameBoardSpaces();
+        RailroadGameBoardSpaces();
 
+        // createGameBoard();
+        // initializeChanceCards();
+        // initializeCommunityChestCards();
+        // shuffleChanceCards();
+        // shuffleCommunityCards();
+        // assignTokensToPlayers();
+        // distributeStartingMoney();
+    }
+/*
     // Step 2: Create board spaces
     private void createGameBoard() {
+
         spaces.add(new Space.GoSpace()); // position 0
         spaces.add(new Property("Mediterranean Avenue", 60, "Brown"));
         spaces.add(new Space.CommunityChestSpace());
@@ -41,7 +48,7 @@ public class GameBoard {
         spaces.add(new Property("Connecticut Avenue", 120, "Light Blue"));
         spaces.add(new Space.JailSpace());
         spaces.add(new Property("St. Charles Place", 140, "Pink"));
-        spaces.add(new Space.UtilitySpace("Electric Company", 150));
+        spaces.add(new Space.UtilitySpace("Electric Company", 150, utilityCost, utilityMortgageValue));
         spaces.add(new Property("States Avenue", 140, "Pink"));
         spaces.add(new Property("Virginia Avenue", 160, "Pink"));
         spaces.add(new Space.RailroadSpace("Pennsylvania Railroad", 200));
@@ -57,7 +64,7 @@ public class GameBoard {
         spaces.add(new Space.RailroadSpace("B&O Railroad", 200));
         spaces.add(new Property("Atlantic Avenue", 260, "Yellow"));
         spaces.add(new Property("Ventnor Avenue", 260, "Yellow"));
-        spaces.add(new Space.UtilitySpace("Water Works", 150));
+        spaces.add(new Space.UtilitySpace("Water Works", 150, utilityCost, utilityMortgageValue));
         spaces.add(new Property("Marvin Gardens", 280, "Yellow"));
         spaces.add(new Space.GoToJailSpace());
         spaces.add(new Property("Pacific Avenue", 300, "Green"));
@@ -70,9 +77,66 @@ public class GameBoard {
         spaces.add(new Space.LuxuryTaxSpace());
         spaces.add(new Property("Boardwalk", 400, "Blue"));
     }
+*/
+    private void UtilityGameBoardSpaces() {
+
+        try {
+            List<String> lines = Files.readAllLines(Path.of("src/resources/Utilities.txt"));
+
+            for (String line : lines) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue; // Skip comments and empty lines
+                }
+
+                String[] parts = line.split(",\\s*");
+
+                String name = parts[0];
+                int utilitySpaceLocation = Integer.parseInt(parts[1]);
+                int utilityCost = Integer.parseInt(parts[2]);
+                int utilityMortgageValue = Integer.parseInt(parts[3]);
+
+                spaces.add(new Space.UtilitySpace(name, utilitySpaceLocation, utilityCost, utilityMortgageValue));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    private void RailroadGameBoardSpaces() {
+        try {
+            List<String> lines = Files.readAllLines(Path.of("src/resources/Railroads.txt"));
+
+            for (String line : lines) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue; // Skip comments and empty lines
+                }
+
+                String[] parts = line.split(",\\s*");
+
+                String name = parts[0];
+                int railroadSpaceLocation = Integer.parseInt(parts[1]);
+                int railroadCost = Integer.parseInt(parts[2]);
+                int railroadCostWithOne = Integer.parseInt(parts[3]);
+                int railroadCostWithTwo = Integer.parseInt(parts[4]);
+                int railroadCostWithThree = Integer.parseInt(parts[5]);
+                int railroadCostWithFour = Integer.parseInt(parts[6]);
+                int railroadMortgageValue = Integer.parseInt(parts[2]); // Corrected mortgage value
+
+                spaces.add(new Space.RailroadSpace(name, railroadSpaceLocation, railroadCost, railroadCostWithOne,
+                        railroadCostWithTwo, railroadCostWithThree, railroadCostWithFour, railroadMortgageValue));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+
+
+
 
     // Step 3: Initialize Chance cards
     private void initializeChanceCards() {
+
         chanceDeck.add(new ChanceCard("Advance to Boardwalk", player -> player.setPosition(39))); // Assuming 39 is Boardwalk
         chanceDeck.add(new ChanceCard("Advance to Go (Collect $200)", player -> {player.setPosition(0); player.increaseMoney(200);}));
         chanceDeck.add(new ChanceCard("Go to Jail – Go directly to jail – Do not pass Go – Do not collect $200", player -> player.setPosition(10))); // Assuming 10 is Jail

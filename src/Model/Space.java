@@ -1,5 +1,3 @@
-package Model;
-
 public abstract class Space {
     protected String name;
 
@@ -53,10 +51,12 @@ public abstract class Space {
     public static class RailroadSpace extends Space {
         final private int price;
 
-        public RailroadSpace(String name, int price) {
+        public RailroadSpace(String name, int location, int price, int costWithOne, int costWithTwo,
+                             int costWithThree, int costWithFour, int mortgageValue) {
             super(name);
             this.price = price;
         }
+
 
         @Override
         public void landOn(Player player) {
@@ -92,7 +92,7 @@ public abstract class Space {
     public static class UtilitySpace extends Space {
         final private int price;
 
-        public UtilitySpace(String name, int price) {
+        public UtilitySpace(String name, int location, int price, int mortgageValue) {
             super(name);
             this.price = price;
         }
