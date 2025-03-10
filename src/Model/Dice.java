@@ -37,11 +37,6 @@ public class Dice {
         Random r = new Random();
         result1 = r.nextInt(1,7);
         result2 = r.nextInt(1,7);
-        if (result1 == result2){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return result1 == result2;
     }
 }

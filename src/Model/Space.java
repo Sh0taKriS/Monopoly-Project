@@ -1,3 +1,5 @@
+package Model;
+
 public abstract class Space {
     protected String name;
 
@@ -19,7 +21,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Go space
+            player.increaseMoney(200); // Collect $200 for passing Go
+            System.out.println(player.getName() + " landed on Go and collected $200.");
         }
     }
 
@@ -31,7 +34,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Community Chest space
+            // Logic for drawing a Community Chest card
+            System.out.println(player.getName() + " landed on Community Chest.");
         }
     }
 
@@ -43,7 +47,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Income Tax space
+            player.decreaseMoney(200); // Pay $200 for Income Tax
+            System.out.println(player.getName() + " landed on Income Tax and paid $200.");
         }
     }
 
@@ -57,10 +62,10 @@ public abstract class Space {
             this.price = price;
         }
 
-
         @Override
         public void landOn(Player player) {
             // Logic for landing on Railroad space
+            System.out.println(player.getName() + " landed on " + name + " Railroad.");
         }
     }
 
@@ -72,7 +77,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Chance space
+            // Logic for drawing a Chance card
+            System.out.println(player.getName() + " landed on Chance.");
         }
     }
 
@@ -85,6 +91,7 @@ public abstract class Space {
         @Override
         public void landOn(Player player) {
             // Logic for landing on Jail space
+            System.out.println(player.getName() + " landed on Jail.");
         }
     }
 
@@ -100,6 +107,7 @@ public abstract class Space {
         @Override
         public void landOn(Player player) {
             // Logic for landing on Utility space
+            System.out.println(player.getName() + " landed on " + name + " Utility.");
         }
     }
 
@@ -112,6 +120,7 @@ public abstract class Space {
         @Override
         public void landOn(Player player) {
             // Logic for landing on Free Parking space
+            System.out.println(player.getName() + " landed on Free Parking.");
         }
     }
 
@@ -123,7 +132,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Go To Jail space
+            player.goToJail(); // Send player to Jail
+            System.out.println(player.getName() + " landed on Go To Jail and is sent to Jail.");
         }
     }
 
@@ -135,7 +145,8 @@ public abstract class Space {
 
         @Override
         public void landOn(Player player) {
-            // Logic for landing on Luxury Tax space
+            player.decreaseMoney(75); // Pay $75 for Luxury Tax
+            System.out.println(player.getName() + " landed on Luxury Tax and paid $75.");
         }
     }
 }
