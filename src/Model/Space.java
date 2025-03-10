@@ -111,6 +111,25 @@ public abstract class Space {
         }
     }
 
+     public static class PropertySpace extends Space {
+        final private int price;
+
+         public PropertySpace(String name, int location, String color, int price,
+                              int propertySite, int propertySiteWithColorSet,
+                              int costWithOne, int costWithTwo, int costWithThree,
+                              int costWithFour, int costWithHotel, int mortgageValue,
+                              int costOfHouseHotel) {
+         super(name);
+         this.price = price;
+         }
+
+         @Override
+         public void landOn(Player player) {
+             // Logic for landing on Property space
+             System.out.println(player.getName() + " landed on " + name + " Property.");
+         }
+     }
+
     // FreeParkingSpace class
     public static class FreeParkingSpace extends Space {
         public FreeParkingSpace() {

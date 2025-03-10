@@ -23,6 +23,7 @@ public class GameBoard {
     private void initializeBoard() {
         UtilityGameBoardSpaces();
         RailroadGameBoardSpaces();
+        PropertyGameBoardSpaces();
         initializeChanceCards();
         initializeCommunityChestCards();
         shuffleChanceCards();
@@ -73,6 +74,58 @@ public class GameBoard {
             System.out.println("Error reading file: " + e.getMessage());
         }
     }
+
+    private void PropertyGameBoardSpaces() {
+        try {
+            List<String> lines = Files.readAllLines(Path.of("src/resources/Properties.txt"));
+            for (String line : lines) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue; // Skip comments and empty lines
+                }
+                String[] parts = line.split(",\\s*");
+                String name = parts[0];
+                int propertySpaceLocation = Integer.parseInt(parts[1]);
+                String propertyColor = parts[2];
+                int propertyCost = Integer.parseInt(parts[3]);
+                int propertySite = Integer.parseInt(parts[4]);
+                int propertySiteWithColorSet = Integer.parseInt(parts[5]);
+                int propertyCostWithOne = Integer.parseInt(parts[6]);
+                int propertyCostWithTwo = Integer.parseInt(parts[7]);
+                int propertyCostWithThree = Integer.parseInt(parts[8]);
+                int propertyCostWithFour = Integer.parseInt(parts[9]);
+                int propertyCostWithHotel = Integer.parseInt(parts[10]);
+                int propertyMortgageValue = Integer.parseInt(parts[11]);
+                int propertyCostOfHouseHotel = Integer.parseInt(parts[12]);
+                spaces.add(new Space.PropertySpace(name, propertySpaceLocation, propertyColor, propertyCost,
+                        propertySite, propertySiteWithColorSet, propertyCostWithOne, propertyCostWithTwo,
+                        propertyCostWithThree, propertyCostWithFour, propertyCostWithHotel, propertyMortgageValue,
+                        propertyCostOfHouseHotel));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+/**
+    private void TaxGameBoardSpaces() {
+        try {
+            List<String> lines = Files.readAllLines(Path.of("src/resources/SpacesTax.txt"));
+            for (String line : lines) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue; // Skip comments and empty lines
+                }
+                String[] parts = line.split(",\\s*");
+                String name = parts[0];
+                int taxSpaceLocation = Integer.parseInt(parts[1]);
+                int taxPriceToPay = Integer.parseInt(parts[2]);
+                // spaces.add(new Space.UtilitySpace(name, taxSpaceLocation, taxPriceToPay));
+                // TaxSpace doesn't exist in line above. If method is necessary, create TaxSpace
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+ **/
+
 
     // Step 3: Initialize Chance cards
     private void initializeChanceCards() {
