@@ -10,12 +10,13 @@ public class NewMonopolyGame {
     public static void main(String[] args) {
         // Create a list of players
         List<Player> players = new ArrayList<>();
-        players.add(new Player("Player 1", "Token 1"));
-        players.add(new Player("Player 2", "Token 2"));
+        GameBoard board = new GameBoard(players); // Initialize GameBoard first
+
+        players.add(new Player("Player 1", "Token 1", board));
+        players.add(new Player("Player 2", "Token 2", board));
         // Add more players as needed
 
         // Initialize game components with the list of players
-        GameBoard board = new GameBoard(players);
         /*
         As of right now this is not needed but is a placeholder for future use
 
