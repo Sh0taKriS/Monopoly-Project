@@ -1,3 +1,6 @@
+/**
+ * Tests Created by Kristian Wright
+ */
 package ModelTests;
 
 import Model.*;

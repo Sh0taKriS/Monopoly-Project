@@ -1,3 +1,6 @@
+/**
+ * Tests Created by Kristian Wright and Rachele Grigoli
+ */
 package ModelTests;
 
 import Model.GameBoard;

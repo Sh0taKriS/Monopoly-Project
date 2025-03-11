@@ -1,3 +1,6 @@
+/**
+ * Class Created by Finn Dempsey Supported by Kristian Wright
+ */
 package Model;
 
 import java.util.Random;

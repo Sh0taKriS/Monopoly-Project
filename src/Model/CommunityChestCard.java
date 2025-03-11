@@ -1,3 +1,6 @@
+/**
+ * Class Created by Kristian Wright
+ */
 package Model;
 
 import java.util.function.Consumer;

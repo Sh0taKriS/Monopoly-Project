@@ -1,3 +1,6 @@
+/**
+ * Class Created by Collin Castro supported by Kristian Wright
+ */
 package Model;
 
 import java.util.ArrayList;
