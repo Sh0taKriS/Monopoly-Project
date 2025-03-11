@@ -1,3 +1,6 @@
+/**
+ * Class Created by Collin Castro supported by Kristian Wright
+ */
 package Model;
 
 import java.util.ArrayList;
@@ -13,18 +16,13 @@ import java.util.Scanner;
  *  - Auctioning properties
  *  - Handling mortgages
  */
-public class Bank 
-{
+public class Bank {
 
-    // Standard Monopoly typically includes 32 houses and 12 hotels (Double check if this is okay with client)
     private static final int INITIAL_HOUSES = 32;
     private static final int INITIAL_HOTELS = 12;
 
     private int housesRemaining;
     private int hotelsRemaining;
-
-    // We can track unowned properties like this,
-    // or use Property.owner == null to determine if the bank owns it.
     private final List<Property> unownedProperties;
 
     /**
@@ -33,68 +31,58 @@ public class Bank
      *
      * @param allProperties The full list of properties in the game (these are initially unowned).
      */
-    public Bank(List<Property> allProperties) 
-    {
+    public Bank(List<Property> allProperties) {
         this.housesRemaining = INITIAL_HOUSES;
         this.hotelsRemaining = INITIAL_HOTELS;
         this.unownedProperties = new ArrayList<>();
 
-        // Initialize unownedProperties
-        for (Property p : allProperties) 
-        {
-            if (!p.isOwned()) 
-            {
+        for (Property p : allProperties) {
+            if (!p.isOwned()) {
                 unownedProperties.add(p);
             }
         }
     }
 
-    // --- GETTERS ---
-
-    public int getHousesRemaining() 
-    {
+    public int getHousesRemaining() {
         return housesRemaining;
     }
 
-    public int getHotelsRemaining() 
-    {
+    public int getHotelsRemaining() {
         return hotelsRemaining;
     }
 
-    // --- BANKING METHODS ---
-
     /**
      * Gives a specified amount of money to a Player.
-     * Ex: Passing GO, Chance/Community Chest awards, etc.
+     *
+     * @param player The player to receive the money.
+     * @param amount The amount of money to give.
      */
-    public void payPlayer(Player player, int amount) 
-    {
+    public void payPlayer(Player player, int amount) {
         player.increaseMoney(amount);
         System.out.println("Bank pays " + player.getName() + " $" + amount);
     }
 
     /**
      * Collects a specified amount of money from a Player.
-     * Ex: taxes, fees, fines, etc.
+     *
+     * @param player The player to collect money from.
+     * @param amount The amount of money to collect.
      */
-    public void collectFromPlayer(Player player, int amount) 
-    {
+    public void collectFromPlayer(Player player, int amount) {
         player.decreaseMoney(amount);
         System.out.println("Bank collects $" + amount + " from " + player.getName());
     }
 
     /**
      * Sells a property to a player at face value (assuming it is unowned).
-     * This is a direct purchase with no auction.
+     *
+     * @param property The property to sell.
+     * @param buyer The player buying the property.
      */
-    public void sellProperty(Property property, Player buyer) 
-    {
-        if (!property.isOwned()) 
-        {
-            // If the buyer can afford it, transfer ownership
-            if (buyer.getMoney() >= property.getPrice()) 
-            {
-                property.buy(buyer); // This should set owner and deduct money in your Property class
+    public void sellProperty(Property property, Player buyer) {
+        if (!property.isOwned()) {
+            if (buyer.getMoney() >= property.getPrice()) {
+                property.buy(buyer);
                 unownedProperties.remove(property);
             } else {
                 System.out.println(buyer.getName() + " cannot afford " + property.getName());
@@ -106,105 +94,80 @@ public class Bank
 
     /**
      * Auctions a property among all players.
-     * It is pretty simple so we can talk about further improvements
-     * down the line if we want.
+     *
+     * @param property The property to auction.
+     * @param players The list of players participating in the auction.
      */
-    public void auctionProperty(Property property, List<Player> players) 
-    {
-        // Remove from unowned list if it’s in there
+    public void auctionProperty(Property property, List<Player> players) {
         unownedProperties.remove(property);
-
         System.out.println("Starting auction for " + property.getName() + " (Price: $" + property.getPrice() + ")");
-
-        // Simple console-based auction logic (until we get the gameboard)
         Scanner scanner = new Scanner(System.in);
         int highestBid = 0;
         Player highestBidder = null;
 
-        for (Player p : players) 
-        {
-            // Skip players who cannot bid at all
-            if (p.getMoney() <= 0) 
-            {
+        for (Player p : players) {
+            if (p.getMoney() <= 0) {
                 continue;
             }
 
             System.out.println(p.getName() + ", enter your bid (0 to skip): ");
             int bid = 0;
-            try 
-            {
+            try {
                 bid = Integer.parseInt(scanner.nextLine());
-            } 
-            catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {}
 
-            if (bid > highestBid && bid <= p.getMoney()) 
-            {
+            if (bid > highestBid && bid <= p.getMoney()) {
                 highestBid = bid;
                 highestBidder = p;
             }
         }
 
-        if (highestBidder != null) 
-        {
-            property.buy(highestBidder); // Deducts money, sets ownership in the Property class
-            // If we want to override the property price to be the bid cost, we can by not using property.buy(...)
-            // Other methods:
-            //   highestBidder.decreaseMoney(highestBid);
-            //   property.setOwner(highestBidder);
+        if (highestBidder != null) {
+            property.buy(highestBidder);
             System.out.println(highestBidder.getName() + " wins the auction for $" + highestBid + ".");
         } else {
-            // No one bid
             System.out.println("No bids were placed. The property remains with the Bank.");
             unownedProperties.add(property);
         }
     }
 
-    // --- MORTGAGE METHODS ---
-
     /**
      * Mortgages a property (pays the player half its price).
-     * Player retains possession but no rent can be collected while mortgaged.
+     *
+     * @param property The property to mortgage.
+     * @param owner The owner of the property.
      */
-    public void mortgageProperty(Property property, Player owner) 
-    {
-        if (property.getOwner() != owner) 
-        {
+    public void mortgageProperty(Property property, Player owner) {
+        if (property.getOwner() != owner) {
             System.out.println("Cannot mortgage property you don't own!");
             return;
         }
-        if (property.isMortgaged()) 
-        {
+        if (property.isMortgaged()) {
             System.out.println(property.getName() + " is already mortgaged.");
             return;
         }
-        property.mortgage(); // Typically sets mortgaged = true internally
-        // property.mortgage() is in the Property class and already calls owner.increaseMoney(price/2).
-        // We can discuss which class it should fall into.
-        // (owner.increaseMoney(property.getPrice() / 2);)
+        property.mortgage();
     }
 
     /**
-     * Lifts a mortgage from a property if the owner has enough money
-     * (and charges the 10% interest).
+     * Lifts a mortgage from a property if the owner has enough money.
+     *
+     * @param property The property to unmortgage.
+     * @param owner The owner of the property.
      */
-    public void unmortgageProperty(Property property, Player owner) 
-    {
-        if (property.getOwner() != owner) 
-        {
+    public void unmortgageProperty(Property property, Player owner) {
+        if (property.getOwner() != owner) {
             System.out.println("Cannot unmortgage property you don't own!");
             return;
         }
-        if (!property.isMortgaged())
-        {
+        if (!property.isMortgaged()) {
             System.out.println(property.getName() + " is not mortgaged.");
             return;
         }
-        property.unmortgage(); 
-        // property.unmortgage() is in the Property class.
-        // We can discuss which class it should fall into.
+        property.unmortgage();
     }
 
-    // --- HOUSES & HOTELS ---
+<<<<<<< HEAD
     /**
      * Sells a house to the player for the given property.
      * The player must own the full color set and build houses evenly.
@@ -338,23 +301,21 @@ public class Bank
     }
 
 
-    // --- UTILITY / DEBUG ---
-
+    // UTILITY / DEBUG 
     /**
      * Prints the current state of the Bank: how many houses/hotels remain,
      * and any unowned properties.
      */
+  
     public void printBankStatus() 
     {
         System.out.println("\n--- Bank Status ---");
         System.out.println("Houses remaining: " + housesRemaining);
         System.out.println("Hotels remaining: " + hotelsRemaining);
         System.out.println("Unowned properties:");
-        for (Property p : unownedProperties) 
-        {
+        for (Property p : unownedProperties) {
             System.out.println("   - " + p.getName() + " ($" + p.getPrice() + ")");
         }
         System.out.println("-------------------\n");
     }
-
 }

@@ -1,115 +1,88 @@
+/**
+ * Class Created by Kristian Wright
+ */
 package Model;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Represents a Chance card in the game.
+ * Each Chance card has a description and an effect that is applied to a player.
+ */
 public class ChanceCard {
     final private String description;
     final private Consumer<Player> effect;
 
+    /**
+     * Constructs a ChanceCard with the given description and effect.
+     *
+     * @param description The description of the Chance card.
+     * @param effect The effect of the Chance card, represented as a Consumer of Player.
+     */
     public ChanceCard(String description, Consumer<Player> effect) {
         this.description = description;
         this.effect = effect;
     }
 
+    /**
+     * Applies the effect of the Chance card to the given player.
+     *
+     * @param player The player to apply the effect to.
+     */
     public void apply(Player player) {
         effect.accept(player);
     }
 
+    /**
+     * Gets the description of the Chance card.
+     *
+     * @return The description of the Chance card.
+     */
     public String getDescription() {
         return description;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChanceCard that = (ChanceCard) o;
+        return Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description);
+    }
+
     // Helper methods for card actions
-    public static void moveToNearestUtility(Player player) {
+
+    /**
+     * Moves the player to the nearest utility.
+     */
+    public static void moveToNearestUtility() {
         // Logic to move player to nearest utility
     }
 
-    public static void moveToNearestRailroad(Player player) {
+    /**
+     * Moves the player to the nearest railroad.
+     */
+    public static void moveToNearestRailroad() {
         // Logic to move player to nearest railroad
     }
 
-    public static void makeGeneralRepairs(Player player) {
+    /**
+     * Makes general repairs on the player's properties.
+     */
+    public static void makeGeneralRepairs() {
         // Logic to make general repairs on player's properties
     }
 
-    public static void payEachPlayer(Player player, int amount) {
+    /**
+     * Pays each player a specified amount.
+     */
+    public static void payEachPlayer() {
         // Logic to pay each player a specified amount
-    }
-
-    public static void collectFromEachPlayer(Player player, int amount) {
-        // Logic to collect a specified amount from each player
-    }
-
-    public static Consumer<Player> getEffect(String description) {
-        return player -> {
-            switch (description) {
-                case "Advance to Boardwalk.":
-                    player.setPosition(39);
-                    break;
-                case "Advance to Go (Collect $200).":
-                    player.setPosition(0);
-                    player.increaseMoney(200);
-                    break;
-                case "Go to Jail. Go directly to Jail, do not pass Go, do not collect $200.":
-                    player.setPosition(10);
-                    break;
-                case "Pay school fees of $150.":
-                    player.decreaseMoney(150);
-                    break;
-                case "Bank pays you dividend of $50.":
-                    player.increaseMoney(50);
-                    break;
-                case "Your building loan matures. Collect $150.":
-                    player.increaseMoney(150);
-                    break;
-                case "You have won a crossword competition. Collect $100.":
-                    player.increaseMoney(100);
-                    break;
-                case "Advance to Illinois Avenue. If you pass Go, collect $200.":
-                    if (player.getPosition() > 24) {
-                        player.increaseMoney(200);
-                    }
-                    player.setPosition(24);
-                    break;
-                case "Advance to St. Charles Place. If you pass Go, collect $200.":
-                    if (player.getPosition() > 11) {
-                        player.increaseMoney(200);
-                    }
-                    player.setPosition(11);
-                    break;
-                case "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled.":
-                    moveToNearestRailroad(player);
-                    break;
-                case "Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times amount thrown.":
-                    moveToNearestUtility(player);
-                    break;
-                case "Take a trip to Reading Railroad. If you pass Go, collect $200.":
-                    if (player.getPosition() > 5) {
-                        player.increaseMoney(200);
-                    }
-                    player.setPosition(5);
-                    break;
-                case "Speeding fine $15.":
-                    player.decreaseMoney(15);
-                    break;
-                case "Go back 3 spaces.":
-                    player.setPosition(player.getPosition() - 3);
-                    break;
-                case "Make general repairs on all your property. For each house pay $25. For each hotel pay $100.":
-                    makeGeneralRepairs(player);
-                    break;
-                case "Pay poor tax of $15.":
-                    player.decreaseMoney(15);
-                    break;
-                case "You have been elected Chairman of the Board. Pay each player $50.":
-                    payEachPlayer(player, 50);
-                    break;
-                case "Get Out of Jail Free.":
-                    player.receiveGetOutOfJailFreeCard();
-                    break;
-                default:
-                    System.out.println("Unknown Chance card: " + description);
-            }
-        };
     }
 }
