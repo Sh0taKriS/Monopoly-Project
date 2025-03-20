@@ -164,11 +164,66 @@ public class Property extends Space {
     }
 
     /**
+     * Gets the cost with three houses.
+     *
+     * @return The cost with three houses.
+     */
+    public int getCostWithThreeHouses() {
+        return baseRent * 15;
+    }
+
+    /**
+     * Gets the cost with four houses.
+     *
+     * @return The cost with four houses.
+     */
+    public int getCostWithFourHouses() {
+        return baseRent * 20;
+    }
+
+    /**
+     * Gets the cost with a hotel.
+     *
+     * @return The cost with a hotel.
+     */
+    public int getCostWithHotel() {
+        return baseRent * 50;
+    }
+
+    /**
+     * Gets the mortgage value.
+     *
+     * @return The mortgage value.
+     */
+    public int getMortgageValue() {
+        return price / 2;
+    }
+
+    /**
+     * Gets the cost of house/hotel.
+     *
+     * @return The cost of house/hotel.
+     */
+    public int getCostOfHouseHotel() {
+        return baseRent * 5;
+    }
+
+    /**
      * Handles the event when a player lands on the property.
      *
      * @param player The player landing on the property.
      */
     @Override
     public void landOn(Player player) {
+        if (owner == null) {
+            System.out.println(player.getName() + " landed on " + name + " which is unowned.");
+        } else if (owner != player) {
+            int rent = calculateRent();
+            player.decreaseMoney(rent);
+            owner.increaseMoney(rent);
+            System.out.println(player.getName() + " landed on " + name + " and paid $" + rent + " rent to " + owner.getName());
+        } else {
+            System.out.println(player.getName() + " landed on their own property " + name + ".");
+        }
     }
 }

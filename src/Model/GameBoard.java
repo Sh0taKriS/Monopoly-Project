@@ -1,6 +1,3 @@
-/**
- * Class Created by Kristian Wright
- */
 package Model;
 
 import java.util.*;
@@ -144,14 +141,32 @@ public class GameBoard {
      * Assigns tokens to players randomly.
      */
     public void assignTokensToPlayers() {
-        List<String> availableTokens = Arrays.asList(
+        List<String> availableTokens = new ArrayList<>(Arrays.asList(
                 "Top Hat", "Battleship", "Thimble", "Cannon", "Cat", "Iron",
                 "Scottie dog", "The Shoe", "Boot", "Ducky", "Horse & Rider",
                 "Penguin", "Race car", "Train", "Wheelbarrow"
-        );
-        Collections.shuffle(availableTokens);
-        for (int i = 0; i < players.size(); i++) {
-            players.get(i).setToken(availableTokens.get(i));
+        ));
+        Scanner scanner = new Scanner(System.in);
+
+        for (Player player : players) {
+            System.out.println(player.getName() + ", choose your token from the following list:");
+            for (int j = 0; j < availableTokens.size(); j++) {
+                System.out.println((j + 1) + ": " + availableTokens.get(j));
+            }
+
+            int choice = -1;
+            while (choice < 1 || choice > availableTokens.size()) {
+                System.out.print("Enter the number of your choice: ");
+                try {
+                    choice = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                }
+            }
+
+            String chosenToken = availableTokens.remove(choice - 1);
+            player.setToken(chosenToken);
+            System.out.println(player.getName() + " has chosen the " + chosenToken + " token.");
         }
     }
 

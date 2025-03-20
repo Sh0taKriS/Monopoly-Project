@@ -50,7 +50,9 @@ public class DiceTest {
         if (player.isInJail()) {
             assertEquals(10, player.getPosition(), "Player should be in jail at position 10.");
         } else {
-            assertTrue(totalDistanceMoved >= 2 && totalDistanceMoved <= 35, "Player should move between 2 and 35 spaces after rolling dice.");
+            int result1 = dice.getResult1();
+            int result2 = dice.getResult2();
+            assertTrue(result1 + result2 >= 2 && result1 + result2 <= 12, "Player should move between 2 and 12 spaces after rolling dice.");
         }
     }
 
@@ -61,7 +63,7 @@ public class DiceTest {
     @Test
     public void testRollJail() {
         boolean result = dice.rollJail();
-        assertTrue(true, "rollJail should return a boolean value.");
+        assertTrue(result == true || result == false, "rollJail should return a boolean value.");
     }
 
     /**
@@ -70,14 +72,15 @@ public class DiceTest {
      */
     @Test
     public void testRollDiceDoubles() {
-        dice.rollDice(player);
         int doublesRolled = 0;
-        while (dice.rollJail()) {
-            doublesRolled++;
-            if (doublesRolled == 3) {
-                assertTrue(player.isInJail(), "Player should be in jail after rolling doubles three times.");
-                break;
+        while (doublesRolled < 3) {
+            dice.rollDice(player);
+            if (dice.getResult1() == dice.getResult2()) {
+                doublesRolled++;
+            } else {
+                doublesRolled = 0;
             }
         }
+        assertTrue(player.isInJail(), "Player should be in jail after rolling doubles three times.");
     }
 }

@@ -1,11 +1,9 @@
-/**
- * Tests Created by Kristian Wright
- */
 package ModelTests;
 
 import Model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +43,7 @@ public class GameBoardTest {
      */
     @Test
     public void testMovePlayer() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         gameBoard.movePlayer(player, 10);
         assertEquals(10, player.getPosition());
     }
@@ -56,7 +54,7 @@ public class GameBoardTest {
      */
     @Test
     public void testPassGo() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         player.setPosition(39);
         gameBoard.movePlayer(player, 2);
         assertEquals(1, player.getPosition());
@@ -69,7 +67,7 @@ public class GameBoardTest {
      */
     @Test
     public void testLandOnGo() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         gameBoard.movePlayer(player, 0);
         assertEquals(0, player.getPosition());
         assertEquals(1700, player.getMoney()); // Player should collect $200 for landing on Go
@@ -81,12 +79,10 @@ public class GameBoardTest {
      */
     @Test
     public void testDrawChanceCard() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         gameBoard.getChanceDeck().push(new ChanceCard("Test Chance Card", p -> p.increaseMoney(100)));
         player.setPosition(7); // Directly set player position to Chance space
-        System.out.println("Player money before drawing card: " + player.getMoney());
         gameBoard.getSpace(7).landOn(player); // Ensure player lands on Chance space
-        System.out.println("Player money after drawing card: " + player.getMoney());
         assertEquals(1600, player.getMoney()); // Player should have $1600 after drawing the card
     }
 
@@ -96,12 +92,10 @@ public class GameBoardTest {
      */
     @Test
     public void testDrawCommunityChestCard() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         gameBoard.getCommunityDeck().push(new CommunityChestCard("Test Community Chest Card", p -> p.increaseMoney(100)));
         player.setPosition(2); // Directly set player position to Community Chest space
-        System.out.println("Player money before drawing card: " + player.getMoney());
         gameBoard.getSpace(2).landOn(player); // Ensure player lands on Community Chest space
-        System.out.println("Player money after drawing card: " + player.getMoney());
         assertEquals(1600, player.getMoney()); // Player should have $1600 after drawing the card
     }
 
@@ -111,9 +105,45 @@ public class GameBoardTest {
      */
     @Test
     public void testGoToJail() {
-        Player player = players.getFirst();
+        Player player = players.get(0);
         gameBoard.movePlayer(player, 30); // Assuming Go To Jail space is at position 30
         assertTrue(player.isInJail());
         assertEquals(10, player.getPosition()); // Player should be at Jail position
+    }
+
+    /**
+     * Tests assigning tokens to players with valid input.
+     */
+    @Test
+    public void testAssignTokensToPlayers_ValidInput() {
+        String input = "1\n2\n"; // Player 1 chooses "Top Hat", Player 2 chooses "Thimble"
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        gameBoard.assignTokensToPlayers();
+        assertEquals("Top Hat", players.get(0).getToken());
+        assertEquals("Thimble", players.get(1).getToken());
+    }
+
+    /**
+     * Tests assigning tokens to players with invalid input followed by valid input.
+     */
+    @Test
+    public void testAssignTokensToPlayers_InvalidInputThenValid() {
+        String input = "invalid\n1\n1\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        gameBoard.assignTokensToPlayers();
+        assertEquals("Top Hat", players.get(0).getToken());
+        assertEquals("Battleship", players.get(1).getToken());
+    }
+
+    /**
+     * Tests assigning tokens to players ensuring no duplicate tokens are assigned.
+     */
+    @Test
+    public void testAssignTokensToPlayers_DuplicateInput() {
+        String input = "1\n1\n2\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        gameBoard.assignTokensToPlayers();
+        assertEquals("Top Hat", players.get(0).getToken());
+        assertNotEquals("Top Hat", players.get(1).getToken());
     }
 }
